@@ -13,5 +13,3 @@
  1. Установливаем Tampermonkey https://www.tampermonkey.net/
  2. В расширении заходим в панель управления -> уилиты и импортируем из URL https://raw.githubusercontent.com/VF2048/hashtagTemplates/master/AddHashtag.js
  3. Готово
- 
-
