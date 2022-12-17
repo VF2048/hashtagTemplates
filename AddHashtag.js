@@ -9,51 +9,70 @@
 // @grant        none
 // ==/UserScript==
 
+//================ Start Config =====================================================================================
+
+//   Required hashtag depth
+const hashtagsLevelRitm = 1;
+const hashtagsLevelINC = 3;
+
+//   The minimum number of hashtags for different tasks
+const minHashtagCountRITM = 1;
+const minHashtagCountINC = 3;
+
+//    Different levels of hashtags
+// you can add "maxElemINC" or "maxElemRITM" to decrease the minimum count
+const Hashtags = [
+    [
+        { name: "#УП", title: "Выполнено удалённо  или может быть выполнено удаленно." },
+        { name: "#локал", title: "Выполнено локально и не может быть выполнено по другому" },
+    ],
+    [
+        { name: "#ПО", title: "Ошибки, вылеты, не правильная работа…" },
+        { name: "#Железо", title: "Bsod, bad block, не включается…" },
+        { name: "#Периферия", title: "Мыши, клавиатуры, гарнитуры, кабеля… " },
+        { name: "#Сеть", title: "Нет сети, потеря пакетов, недоступность ресурсов" },
+        { name: "#Печать", title: "Кончился картридж, дефекты печати" },
+        { name: "#Маршрутизация", title: "Неверное назначение, нет возможности выполнить доступными средствами(локал\удаленка), требуется участие другой группы.", maxElemINC: 2 },
+        { name: "#Неизвестно", title: "Причину установить не удалось​", maxElemINC: 1 },
+    ],
+    [
+        { name: "#Установка", title: "Обращение выполнено через установку\переустановку ПО" },
+        { name: "#Настройка", title: "Обращение выполнено настройкой\правкой" },
+        { name: "#Консультация", title: "Оказана консультация по обращению" },
+        { name: "#Проверка", title: "Обращение связано с проверкой или проблема не проявилась" },
+        { name: "#Замена", title: "Инцидент устранён заменой модуля\оборудования" },
+    ],
+];
+
+const Answers = [
+    { name: "Доп РЗ", title: "#УП Создано Доп РЗ" },
+];
+
+//================ End Config =====================================================================================
+
 const Ritm = {
-    Type: "Ritm",
-    Max: "maxElemRITM",
+    type: "Ritm",
+    max: "maxElemRITM",
     closeComment_el: "ActivityPageV2DetailedResultMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultMemoEdit-virtual",
     battonslayout: "ActivityPageV2InformationClosedAndPausedGridLayoutGridLayout-item-ActivityPageV2DetailedResultContainer",
-    HashtagsLevel: 1,
-    HashtagCont: 1,
+    hashtagsLevel: hashtagsLevelRitm,
+    hashtagCont: minHashtagCountRITM,
+    defHashtagCont: minHashtagCountRITM,
 }
 
 const Inc = {
-    Type: "Inc",
-    Max: "maxElemINC",
+    type: "Inc",
+    max: "maxElemINC",
     closeComment_el: "ActivityPageV2DetailedResultIncidentMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultIncidentMemoEdit-virtual",
     battonslayout: "ActivityPageV2InformationClosedAndPausedIncidentGridLayoutGridLayout-item-ActivityPageV2DetailedResultIncidentContainer",
-    HashtagsLevel: 3,
-    HashtagCont: 3,
-    HashtagContMove: 2,
+    hashtagsLevel: hashtagsLevelINC,
+    hashtagCont: minHashtagCountINC,
+    defHashtagCont: minHashtagCountINC,
 }
 
 let Task;
-
-const Hashtags = [//different levels of hashtags
-    [
-        { name: "#УП", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#локал", maxElemRITM: 1, maxElemINC: 3 }
-    ],
-    [
-        { name: "#ПО", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#Железо", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#Периферия", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#Сеть", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#Печать", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#Маршрутизация", maxElemRITM: 1, maxElemINC: 2 },
-        { name: "#Неизвестно", maxElemRITM: 1, maxElemINC: 1 }
-    ],
-    [
-        { name: "#Установка", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#Настройка", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#Консультация", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#Проверка", maxElemRITM: 1, maxElemINC: 3 },
-        { name: "#Замена", maxElemRITM: 1, maxElemINC: 3 }
-    ],
-];
 
 (function () {
     'use strict';
@@ -73,14 +92,14 @@ function ifTask() {
             const regex = /(TASK)\d*/gm;
             if (elem.textContent.match(regex)) {
                 clearInterval(IfReady);
-                taskType();
+                tasktype();
                 addButtons();
             }
         }
     }, 10)
 }
 
-function taskType() {
+function tasktype() {
     const task = document.getElementById("ActivityPageV2CaseLookupEdit-link-el");
     const taskText = task.textContent
     const incReg = /(INC)\d*/gm;
@@ -89,34 +108,47 @@ function taskType() {
         Task = Inc;
     if (taskText.match(ritReg))
         Task = Ritm;
-    CheckHashtag();
+    checkHashtag();
 }
 
-function ValideteHashtag(hashtag) {
+function valideteHashtag(hashtag) {
     for (let level = 0; level < Hashtags.length; level++)
         for (const hash of Hashtags[level])
-            if (hashtag === hash.name)
+            if (hashtag === hash.name) {
+                checkMaxHashtags(hash[Task.max]);
                 return level;
+            }
     return -1;
 }
 
-function GetHashText() {
+function resetMaxHashtags() {
+    Task.hashtagCont = Task.defHashtagCont;
+}
 
+function checkMaxHashtags(max) {
+    if (max) {
+        if (Task.hashtagCont > max)
+            Task.hashtagCont = max;
+    }
+}
+
+function getHashText() {
     const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
     const text = closeComment_virtual.value;
     const reg = /(#\S+)\s+?/gm;
     return [text.match(reg), text, reg];
 }
 
-function HashSort() {
+function hashSort() {
     const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
     let text = closeComment_virtual.value;
     const reg = /(#\S+)\s+?/gm;
     const hashtagIt = text.match(reg);
 
     let hashArray = new Array(Hashtags.length + 1).fill(``);
+    resetMaxHashtags();
     while (hashtagIt.length > 0) {
-        const lvElem = ValideteHashtag(hashtagIt[0].trim())
+        const lvElem = valideteHashtag(hashtagIt[0].trim())
         if (lvElem >= 0)
             hashArray[lvElem] += hashtagIt[0];
         else
@@ -129,46 +161,36 @@ function HashSort() {
         com += el;
     com += text;
     setText(com);
+    checkHashtag();
 }
 
-function CheckHashtag() {
+function checkHashtag() {
     const closeComment_el = document.getElementById(Task.closeComment_el);
     const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
     const text = closeComment_virtual.value;
     const reg = /(#\S+)\s+?/gm;
     const hashtagIt = text.match(reg);
-
     if (hashtagIt == null) {
         closeComment_el.style.backgroundColor = "#ff262638";
         return;
     }
-
-    let hashCount;
-    if (hashtagIt.find(e => e == "#Маршрутизация ")) {
-        hashCount = Task.HashtagContMove;
-    }
-    else {
-        hashCount = Task.HashtagCont;
-    }
-    if (hashtagIt.length < hashCount)
+    if (hashtagIt.length < Task.hashtagCont)
         closeComment_el.style.backgroundColor = "#ff262638";
     else {
         closeComment_el.style.backgroundColor = null;
     }
 }
 
-// function checkMaxHashtags(max) {
-//     if (Task.HashtagCont > max)
-//         Task.HashtagCont = max;
-//         console.log(Task.HashtagCont);
-// }
+function genBatton(type, el) {
+    return `<button class="${type}" title="${el.title}">${el.name}</button>`
+}
 
-function generateBattons() {
+function generateBattHash() {
     let battons = ``;
-    for (let i = 0; i < Task.HashtagsLevel; i++) {
+    for (let i = 0; i < Task.hashtagsLevel; i++) {
         let batton = ``;
         for (let el of Hashtags[i]) {
-            batton += `<button class="Hashtag">${el.name}</button>`;
+            batton += genBatton("Hashtag", el);
         }
         battons += `<div class="grid-layout-row ts-box-sizing hashButtons" id="hashButtons">
                 <div class="ts-box-sizing base-edit-with-right-icon base-edit-disabled date-edit datetime-datecontrol">
@@ -184,7 +206,20 @@ function generateBattons() {
                     <button>Отсортировать #</button>
                 </div>
             </div>
+            ${generateBattAns()}
         </div>`;
+}
+
+function generateBattAns() {
+    let battons = ``;
+    for (const el of Answers) {
+        battons += `<div class="grid-layout-row ts-box-sizing hashButtons" id="hashButtons">
+            <div class="ts-box-sizing base-edit-with-right-icon base-edit-disabled date-edit datetime-datecontrol">
+                ${genBatton("Answer", el)}
+            </div>
+        </div>`
+    }
+    return battons;
 }
 
 function addButtons() {
@@ -192,7 +227,7 @@ function addButtons() {
         return;
     const closeLayout = document.getElementById(Task.battonslayout);
     const parent = closeLayout.parentElement;
-    parent.insertAdjacentHTML("beforebegin", generateBattons())
+    parent.insertAdjacentHTML("beforebegin", generateBattHash());
     buttonHandler();
 }
 
@@ -201,7 +236,9 @@ function buttonHandler() {
         if (e.target.tagName == "BUTTON" && e.target.className == "Hashtag")
             addHashtag(e.target.textContent + " ");
         if (e.target.tagName == "BUTTON" && e.target.textContent == "Отсортировать #")
-            HashSort();
+            hashSort();
+        if (e.target.tagName == "BUTTON" && e.target.className == "Answer")
+            setText(e.target.title);
     };
 }
 
@@ -210,9 +247,9 @@ function addHashtag(hashtag) {
     const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
     closeComment_virtual.value = hashtag + closeComment_virtual.value;
     closeComment_el.value = hashtag + closeComment_el.value;
-    HashSort();
-    events();
-    taskType();
+    hashSort();
+    generateEvent();
+    tasktype();
 }
 
 function setText(text) {
@@ -220,20 +257,12 @@ function setText(text) {
     const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
     closeComment_virtual.value = text;
     closeComment_el.value = text;
-    events();
-    taskType();
+    generateEvent();
+    tasktype();
 }
 
-function events(){
-    let ev = new Event("focus",{
-        bubbles:true,
-        cancelable:true,
-    });
-    const closeComment_el = document.getElementById(Task.closeComment_el);
-    closeComment_el.dispatchEvent(ev);
+function generateEvent() {
     document.getElementById(Task.closeComment_el).focus();
-    // let eve = new InputEvent(`input`,true,``);
-    // closeComment_el.dispatchEvent(eve);
 }
 
 function inputRecheak() {
