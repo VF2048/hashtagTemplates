@@ -66,7 +66,7 @@ const Ritm = {
     max: "maxElemRITM",
     closeComment_el: "ActivityPageV2DetailedResultMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultMemoEdit-virtual",
-    battonslayout: "ActivityPageV2InformationClosedAndPausedGridLayoutGridLayout-item-ActivityPageV2DetailedResultContainer",
+    buttonslayout: "ActivityPageV2InformationClosedAndPausedGridLayoutGridLayout-item-ActivityPageV2DetailedResultContainer",
     hashtagsLevel: hashtagsLevelRitm,
     hashtagCont: minHashtagCountRITM,
     defHashtagCont: minHashtagCountRITM,
@@ -77,7 +77,7 @@ const Inc = {
     max: "maxElemINC",
     closeComment_el: "ActivityPageV2DetailedResultIncidentMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultIncidentMemoEdit-virtual",
-    battonslayout: "ActivityPageV2InformationClosedAndPausedIncidentGridLayoutGridLayout-item-ActivityPageV2DetailedResultIncidentContainer",
+    buttonslayout: "ActivityPageV2InformationClosedAndPausedIncidentGridLayoutGridLayout-item-ActivityPageV2DetailedResultIncidentContainer",
     hashtagsLevel: hashtagsLevelINC,
     hashtagCont: minHashtagCountINC,
     defHashtagCont: minHashtagCountINC,
@@ -85,6 +85,7 @@ const Inc = {
 
 let Task;
 const commend = getCommentField();
+const regHash = /(#\S+)\s+?/gm;
 
 (function () {
     'use strict';
@@ -144,16 +145,9 @@ function checkMaxHashtags(max) {
     }
 }
 
-function getHashText() {
-    const text = commend.closeComment_virtual.value;
-    const reg = /(#\S+)\s+?/gm;
-    return [text.match(reg), text, reg];
-}
-
-function hashSort() {
+function hashSort(hashtag = ``) {
     let text = commend.closeComment_virtual.value;
-    const reg = /(#\S+)\s+?/gm;
-    const hashtagIt = text.match(reg);
+    const hashtagIt = text.match(regHash)+hashtag;
 
     let hashArray = new Array(Hashtags.length + 1).fill(``);
     resetMaxHashtags();
@@ -176,8 +170,7 @@ function hashSort() {
 
 function checkHashtag() {
     const text = commend.closeComment_virtual.value;
-    const reg = /(#\S+)\s+?/gm;
-    const hashtagIt = text.match(reg);
+    const hashtagIt = text.match(regHash);
     if (hashtagIt == null) {
         commend.closeComment_el.style.backgroundColor = "#ff262638";
         return;
@@ -201,7 +194,7 @@ function genRow(el) {
         </div>`
 }
 
-function generateBattHash() {
+function generateButtHash() {
     let buttons = ``;
     for (let i = 0; i < Task.hashtagsLevel; i++) {
         let batton = ``;
@@ -213,7 +206,7 @@ function generateBattHash() {
     return `
         <div  id="el1">
             ${buttons}
-            ${genRow(`<button>Отсортировать #</button>`)}
+            ${genRow(`<button class="Sort">Отсортировать #</button>`)}
             ${generateButtAns()}
         </div>`;
 }
@@ -229,27 +222,27 @@ function generateButtAns() {
 function addButtons() {
     if (document.getElementById("hashButtons") != null)
         return;
-    const closeLayout = document.getElementById(Task.battonslayout);
+    const closeLayout = document.getElementById(Task.buttonslayout);
     const parent = closeLayout.parentElement;
-    parent.insertAdjacentHTML("beforebegin", generateBattHash());
+    parent.insertAdjacentHTML("beforebegin", generateButtHash());
     buttonHandler();
 }
 
 function buttonHandler() {
     document.getElementById("el1").onclick = (e) => {
-        if (e.target.tagName == "BUTTON" && e.target.className == "Hashtag")
-            addHashtag(e.target.textContent + " ");
-        if (e.target.tagName == "BUTTON" && e.target.textContent == "Отсортировать #")
-            hashSort();
-        if (e.target.tagName == "BUTTON" && e.target.className == "Answer")
-            setText(e.target.title);
+        if (e.target.tagName == "BUTTON") {
+            if (e.target.className == "Hashtag")
+                addHashtag(e.target.textContent + " ");
+            if (e.target.className == "Sort")
+                hashSort();
+            if (e.target.className == "Answer")
+                setText(e.target.title);
+        }
     };
 }
 
 function addHashtag(hashtag) {
-    commend.closeComment_virtual.value = hashtag + closeComment_virtual.value;
-    commend.closeComment_el.value = hashtag + closeComment_el.value;
-    hashSort();
+    hashSort(hashtag+` `);
     generateEvent();
     tasktype();
 }
