@@ -84,7 +84,7 @@ const Inc = {
 }
 
 let Task;
-const commend = getCommentField();
+let commend;
 const regHash = /(#\S+)\s+?/gm;
 
 (function () {
@@ -147,8 +147,11 @@ function checkMaxHashtags(max) {
 
 function hashSort(hashtag = ``) {
     let text = commend.closeComment_virtual.value;
-    const hashtagIt = text.match(regHash)+hashtag;
-
+    const hashtagIt = text.match(regHash);
+    if (hashtagIt)
+        hashtagIt.push(hashtag);
+    else
+        hashtagIt = [hashtag];
     let hashArray = new Array(Hashtags.length + 1).fill(``);
     resetMaxHashtags();
     while (hashtagIt.length > 0) {
@@ -169,6 +172,7 @@ function hashSort(hashtag = ``) {
 }
 
 function checkHashtag() {
+    commend = getCommentField();
     const text = commend.closeComment_virtual.value;
     const hashtagIt = text.match(regHash);
     if (hashtagIt == null) {
@@ -242,7 +246,7 @@ function buttonHandler() {
 }
 
 function addHashtag(hashtag) {
-    hashSort(hashtag+` `);
+    hashSort(hashtag + ` `);
     generateEvent();
     tasktype();
 }
