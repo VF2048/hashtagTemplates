@@ -185,6 +185,14 @@ function genBatton(type, el) {
     return `<button class="${type}" title="${el.title}">${el.name}</button>`
 }
 
+function genRow(el){
+    return`<div class="grid-layout-row ts-box-sizing hashButtons" id="hashButtons">
+            <div class="ts-box-sizing base-edit-with-right-icon base-edit-disabled date-edit datetime-datecontrol">
+                ${el}
+            </div>
+        </div>`
+}
+
 function generateBattHash() {
     let battons = ``;
     for (let i = 0; i < Task.hashtagsLevel; i++) {
@@ -192,20 +200,12 @@ function generateBattHash() {
         for (let el of Hashtags[i]) {
             batton += genBatton("Hashtag", el);
         }
-        battons += `<div class="grid-layout-row ts-box-sizing hashButtons" id="hashButtons">
-                <div class="ts-box-sizing base-edit-with-right-icon base-edit-disabled date-edit datetime-datecontrol">
-                    ${batton}
-                </div>
-            </div>`
+        battons += genRow(batton);
     }
     return `
         <div  id="el1">
             ${battons}
-            <div class="grid-layout-row ts-box-sizing hashButtons" id="hashButtons">
-                <div class="ts-box-sizing base-edit-with-right-icon base-edit-disabled date-edit datetime-datecontrol">
-                    <button>Отсортировать #</button>
-                </div>
-            </div>
+            ${genRow(`<button>Отсортировать #</button>`)}
             ${generateBattAns()}
         </div>`;
 }
@@ -213,13 +213,9 @@ function generateBattHash() {
 function generateBattAns() {
     let battons = ``;
     for (const el of Answers) {
-        battons += `<div class="grid-layout-row ts-box-sizing hashButtons" id="hashButtons">
-            <div class="ts-box-sizing base-edit-with-right-icon base-edit-disabled date-edit datetime-datecontrol">
-                ${genBatton("Answer", el)}
-            </div>
-        </div>`
+        battons += genBatton("Answer", el);
     }
-    return battons;
+    return genRow(battons);
 }
 
 function addButtons() {
