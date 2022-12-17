@@ -84,6 +84,7 @@ const Inc = {
 }
 
 let Task;
+const commend = getCommentField();
 
 (function () {
     'use strict';
@@ -97,12 +98,12 @@ function main() {
 }
 
 function ifTask() {
-    const IfReady = setInterval(function () {
+    const ifReady = setInterval(function () {
         const elem = document.getElementById("MainHeaderSchemaPageHeaderCaptionLabel");
         if (elem != null) {
             const regex = /(TASK)\d*/gm;
             if (elem.textContent.match(regex)) {
-                clearInterval(IfReady);
+                clearInterval(ifReady);
                 tasktype();
                 addButtons();
             }
@@ -144,15 +145,13 @@ function checkMaxHashtags(max) {
 }
 
 function getHashText() {
-    const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
-    const text = closeComment_virtual.value;
+    const text = commend.closeComment_virtual.value;
     const reg = /(#\S+)\s+?/gm;
     return [text.match(reg), text, reg];
 }
 
 function hashSort() {
-    const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
-    let text = closeComment_virtual.value;
+    let text = commend.closeComment_virtual.value;
     const reg = /(#\S+)\s+?/gm;
     const hashtagIt = text.match(reg);
 
@@ -176,23 +175,21 @@ function hashSort() {
 }
 
 function checkHashtag() {
-    const closeComment_el = document.getElementById(Task.closeComment_el);
-    const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
-    const text = closeComment_virtual.value;
+    const text = commend.closeComment_virtual.value;
     const reg = /(#\S+)\s+?/gm;
     const hashtagIt = text.match(reg);
     if (hashtagIt == null) {
-        closeComment_el.style.backgroundColor = "#ff262638";
+        commend.closeComment_el.style.backgroundColor = "#ff262638";
         return;
     }
     if (hashtagIt.length < Task.hashtagCont)
-        closeComment_el.style.backgroundColor = "#ff262638";
+        commend.closeComment_el.style.backgroundColor = "#ff262638";
     else {
-        closeComment_el.style.backgroundColor = null;
+        commend.closeComment_el.style.backgroundColor = null;
     }
 }
 
-function genBatton(type, el) {
+function genButton(type, el) {
     return `<button class="${type}" title="${el.title}">${el.name}</button>`
 }
 
@@ -205,28 +202,28 @@ function genRow(el) {
 }
 
 function generateBattHash() {
-    let battons = ``;
+    let buttons = ``;
     for (let i = 0; i < Task.hashtagsLevel; i++) {
         let batton = ``;
         for (let el of Hashtags[i]) {
-            batton += genBatton("Hashtag", el);
+            batton += genButton("Hashtag", el);
         }
-        battons += genRow(batton);
+        buttons += genRow(batton);
     }
     return `
         <div  id="el1">
-            ${battons}
+            ${buttons}
             ${genRow(`<button>Отсортировать #</button>`)}
-            ${generateBattAns()}
+            ${generateButtAns()}
         </div>`;
 }
 
-function generateBattAns() {
-    let battons = ``;
+function generateButtAns() {
+    let buttons = ``;
     for (const el of Answers) {
-        battons += genBatton("Answer", el);
+        buttons += genButton("Answer", el);
     }
-    return genRow(battons);
+    return genRow(buttons);
 }
 
 function addButtons() {
@@ -250,22 +247,24 @@ function buttonHandler() {
 }
 
 function addHashtag(hashtag) {
-    const closeComment_el = document.getElementById(Task.closeComment_el);
-    const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
-    closeComment_virtual.value = hashtag + closeComment_virtual.value;
-    closeComment_el.value = hashtag + closeComment_el.value;
+    commend.closeComment_virtual.value = hashtag + closeComment_virtual.value;
+    commend.closeComment_el.value = hashtag + closeComment_el.value;
     hashSort();
     generateEvent();
     tasktype();
 }
 
 function setText(text) {
-    const closeComment_el = document.getElementById(Task.closeComment_el);
-    const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
-    closeComment_virtual.value = text;
-    closeComment_el.value = text;
+    commend.closeComment_virtual.value = text;
+    commend.closeComment_el.value = text;
     generateEvent();
     tasktype();
+}
+
+function getCommentField() {
+    const closeComment_el = document.getElementById(Task.closeComment_el);
+    const closeComment_virtual = document.getElementById(Task.closeComment_virtual);
+    return { closeComment_el, closeComment_virtual };
 }
 
 function generateEvent() {
