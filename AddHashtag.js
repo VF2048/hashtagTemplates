@@ -20,6 +20,8 @@ const hashtagsLevelINC = 3;
 const minHashtagCountRITM = 1;
 const minHashtagCountINC = 3;
 
+const sortEnable = true;
+
 //    Different levels of hashtags
 // you can add "maxElemINC" or "maxElemRITM" to decrease the minimum count
 const Hashtags = [
@@ -29,10 +31,10 @@ const Hashtags = [
         // { name: "#SDA", title: "Для снятия статистики  установок ПО\ИС скриптами Дмитрия Свиридова" },
         // { name: "#AC", title: "При использование Admin Cloud" },
         // { name: "#РУК", title: "При установк​е ПО руками, нет автоматизации SCCM,AC,SDA" },
-        { name: "#Беззаявки​​", title: "Используется при закрытии саморегов​" },
+        { name: "#Беззаявки", title: "Используется при закрытии саморегов​" },
         // { name: "#Car", title: "Используется,когда инженер для выполнения заявки едет на машине." },
         // { name: "#Диагностика", title: "​Проверка ПК и периферийного оборудования на исправность и соответствие заявленной конфигурации" },
-        // { name: "​#Профилактика", title: "Механическое удаление пыли и грязи с ПК и периферийного оборудования" },
+        // { name: "#Профилактика", title: "Механическое удаление пыли и грязи с ПК и периферийного оборудования" },
         // { name: "#Dly", title: "Обозначение того, что заявка попала к нам на группу с SLA более 75% либо уже сгоревшая." },
         // { name: "#Itproblem", title: "Отмечаются проактивные работы по выгрузкам из SCCM и Zabbix СЛ ППКС, обычно присылается готовый шаблон в письме с списком активностей и хостов." },
     ],
@@ -54,6 +56,7 @@ const Hashtags = [
     ],
 ];
 
+//   Response template
 const Answers = [
     { name: "Доп РЗ", title: "#УП Создано Доп РЗ" },
     // { name: "#РУК", title: "#РУК ПО «наименование ПО» установлено. Ярлык на рабочем столе либо в меню Пуск." },
@@ -148,7 +151,7 @@ function checkMaxHashtags(max) {
 
 function hashSort(hashtag = ``) {
     let text = commend.closeComment_virtual.value;
-    const hashtagIt = text.match(regHash);
+    let hashtagIt = text.match(regHash);
     if (hashtagIt)
         hashtagIt.push(hashtag);
     else
@@ -157,7 +160,7 @@ function hashSort(hashtag = ``) {
     resetMaxHashtags();
     while (hashtagIt.length > 0) {
         const lvElem = valideteHashtag(hashtagIt[0].trim())
-        if (lvElem >= 0)
+        if (lvElem >= 0 && sortEnable)
             hashArray[lvElem] += hashtagIt[0];
         else
             hashArray[hashArray.length - 1] += hashtagIt[0];
@@ -192,7 +195,8 @@ function genButton(type, el) {
 }
 
 function genRow(el) {
-    return `<div class="grid-layout-row ts-box-sizing hashButtons" id="hashButtons">
+    if (el != ``)
+        return `<div class="grid-layout-row ts-box-sizing hashButtons" id="hashButtons">
             <div class="ts-box-sizing base-edit-with-right-icon base-edit-disabled date-edit datetime-datecontrol">
                 ${el}
             </div>
@@ -211,7 +215,7 @@ function generateButtHash() {
     return `
         <div  id="el1">
             ${buttons}
-            ${genRow(`<button class="Sort">Отсортировать #</button>`)}
+            ${sortEnable ? genRow(`<button class="Sort">Отсортировать #</button>`) : ``}
             ${generateButtAns()}
         </div>`;
 }
