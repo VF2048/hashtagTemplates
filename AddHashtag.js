@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         AddHashtag
 // @namespace    http://Vfokin.net/
-// @version      0.1
+// @updateURL    https://raw.githubusercontent.com/VF2048/hashtagTemplates/master/AddHashtag.js
+// @version      0.2
 // @description  try to take over the world!
 // @author       Vfokin
 // @match        https://creatio.nornik.ru/0/Nui/ViewModule.aspx*
