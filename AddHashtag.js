@@ -21,7 +21,8 @@ const hashtagsLevelINC = 3;
 const minHashtagCountRITM = 1;
 const minHashtagCountINC = 3;
 
-const sortEnable = true;
+const sortEnableRITM = true;
+const sortEnableINC = true;
 
 //    Different levels of hashtags
 // you can add "maxElemINC" or "maxElemRITM" to decrease the minimum count
@@ -72,6 +73,7 @@ const Ritm = {
     closeComment_el: "ActivityPageV2DetailedResultMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultMemoEdit-virtual",
     buttonslayout: "ActivityPageV2InformationClosedAndPausedGridLayoutGridLayout-item-ActivityPageV2DetailedResultContainer",
+    sort:sortEnableRITM,
     hashtagsLevel: hashtagsLevelRitm,
     hashtagCont: minHashtagCountRITM,
     defHashtagCont: minHashtagCountRITM,
@@ -83,6 +85,7 @@ const Inc = {
     closeComment_el: "ActivityPageV2DetailedResultIncidentMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultIncidentMemoEdit-virtual",
     buttonslayout: "ActivityPageV2InformationClosedAndPausedIncidentGridLayoutGridLayout-item-ActivityPageV2DetailedResultIncidentContainer",
+    sort:sortEnableINC,
     hashtagsLevel: hashtagsLevelINC,
     hashtagCont: minHashtagCountINC,
     defHashtagCont: minHashtagCountINC,
@@ -161,7 +164,7 @@ function hashSort(hashtag = ``) {
     resetMaxHashtags();
     while (hashtagIt.length > 0) {
         const lvElem = valideteHashtag(hashtagIt[0].trim())
-        if (lvElem >= 0 && sortEnable)
+        if (lvElem >= 0 && Task.sort)
             hashArray[lvElem] += hashtagIt[0];
         else
             hashArray[hashArray.length - 1] += hashtagIt[0];
