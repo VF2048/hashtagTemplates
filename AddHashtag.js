@@ -226,7 +226,7 @@ function generateButtHash() {
     return `
         <div  id="el1">
             ${buttons}
-            ${sortEnable ? genRow(`<button class="Sort">Отсортировать #</button>`) : ``}
+            ${Task.sort ? genRow(`<button class="Sort">Отсортировать #</button>`) : ``}
             ${generateButtAns()}
         </div>`;
 }
