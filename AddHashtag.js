@@ -59,10 +59,15 @@ const Hashtags = [
 ];
 
 //   Response template
-const Answers = [
+const AnswersRitm = [
     { name: "Доп РЗ", title: "#УП Создано Доп РЗ" },
     // { name: "#РУК", title: "#РУК ПО «наименование ПО» установлено. Ярлык на рабочем столе либо в меню Пуск." },
     // { name: "#AC", title: "#AC ПО «наименование ПО» установлено. ПО опубликовано на учетную запись пользователя, в дальнейшем, при смене компьютера в корпоративной сети ПО будет устанавливаться автоматически." },
+];
+
+const AnswersINC = [
+    {name: "Маршрутизация", title: "#УП #Маршрутизация Создано Доп РЗ"},
+    // { name: "Доп РЗ", title: "#УП Создано Доп РЗ" },
 ];
 
 //================ End Config =====================================================================================
@@ -73,6 +78,7 @@ const Ritm = {
     closeComment_el: "ActivityPageV2DetailedResultMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultMemoEdit-virtual",
     buttonslayout: "ActivityPageV2InformationClosedAndPausedGridLayoutGridLayout-item-ActivityPageV2DetailedResultContainer",
+    answer:AnswersRitm,
     sort:sortEnableRITM,
     hashtagsLevel: hashtagsLevelRitm,
     hashtagCont: minHashtagCountRITM,
@@ -85,6 +91,7 @@ const Inc = {
     closeComment_el: "ActivityPageV2DetailedResultIncidentMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultIncidentMemoEdit-virtual",
     buttonslayout: "ActivityPageV2InformationClosedAndPausedIncidentGridLayoutGridLayout-item-ActivityPageV2DetailedResultIncidentContainer",
+    answer:AnswersINC,
     sort:sortEnableINC,
     hashtagsLevel: hashtagsLevelINC,
     hashtagCont: minHashtagCountINC,
@@ -226,7 +233,7 @@ function generateButtHash() {
 
 function generateButtAns() {
     let buttons = ``;
-    for (const el of Answers) {
+    for (const el of Task.answer) {
         buttons += genButton("Answer", el);
     }
     return genRow(buttons);
