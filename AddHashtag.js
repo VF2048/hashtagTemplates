@@ -12,9 +12,13 @@
 
 //================ Start Config =====================================================================================
 
-//   Required hashtag depth
-const hashtagsLevelRitm = 1;
-const hashtagsLevelINC = 3;
+//   Required hashtag level start
+const startLevelRitm = 1;
+const startLevelINC = 1;
+
+//   Required hashtag level depth
+const endLevelRitm = 1;
+const endLevelINC = 3;
 
 //   The minimum number of hashtags for different tasks
 // to coloring
@@ -39,6 +43,9 @@ const Hashtags = [
         // { name: "#Профилактика", title: "Механическое удаление пыли и грязи с ПК и периферийного оборудования" },
         // { name: "#Dly", title: "Обозначение того, что заявка попала к нам на группу с SLA более 75% либо уже сгоревшая." },
         // { name: "#Itproblem", title: "Отмечаются проактивные работы по выгрузкам из SCCM и Zabbix СЛ ППКС, обычно присылается готовый шаблон в письме с списком активностей и хостов." },
+    ],
+    [
+        { name: "#SDA", title: "Для снятия статистики  установок ПО\ИС скриптами Дмитрия Свиридова" },
     ],
     [
         { name: "#ПО", title: "Ошибки, вылеты, не правильная работа…" },
@@ -66,7 +73,7 @@ const AnswersRitm = [
 ];
 
 const AnswersINC = [
-    {name: "Маршрутизация", title: "#УП #Маршрутизация Создано Доп РЗ"},
+    { name: "Маршрутизация", title: "#УП #Маршрутизация Создано Доп РЗ" },
     // { name: "Доп РЗ", title: "#УП Создано Доп РЗ" },
 ];
 
@@ -78,9 +85,10 @@ const Ritm = {
     closeComment_el: "ActivityPageV2DetailedResultMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultMemoEdit-virtual",
     buttonslayout: "ActivityPageV2InformationClosedAndPausedGridLayoutGridLayout-item-ActivityPageV2DetailedResultContainer",
-    answer:AnswersRitm,
-    sort:sortEnableRITM,
-    hashtagsLevel: hashtagsLevelRitm,
+    answer: AnswersRitm,
+    sort: sortEnableRITM,
+    hashtagsLevelStart: startLevelRitm,
+    hashtagsLevelEnd: endLevelRitm,
     hashtagCont: minHashtagCountRITM,
     defHashtagCont: minHashtagCountRITM,
 }
@@ -91,9 +99,10 @@ const Inc = {
     closeComment_el: "ActivityPageV2DetailedResultIncidentMemoEdit-el",
     closeComment_virtual: "ActivityPageV2DetailedResultIncidentMemoEdit-virtual",
     buttonslayout: "ActivityPageV2InformationClosedAndPausedIncidentGridLayoutGridLayout-item-ActivityPageV2DetailedResultIncidentContainer",
-    answer:AnswersINC,
-    sort:sortEnableINC,
-    hashtagsLevel: hashtagsLevelINC,
+    answer: AnswersINC,
+    sort: sortEnableINC,
+    hashtagsLevelStart: startLevelINC,
+    hashtagsLevelEnd: endLevelINC,
     hashtagCont: minHashtagCountINC,
     defHashtagCont: minHashtagCountINC,
 }
@@ -216,7 +225,7 @@ function genRow(el) {
 
 function generateButtHash() {
     let buttons = ``;
-    for (let i = 0; i < Task.hashtagsLevel; i++) {
+    for (let i = Task.hashtagsLevelStart - 1; i < Task.hashtagsLevelEnd; i++) {
         let batton = ``;
         for (let el of Hashtags[i]) {
             batton += genButton("Hashtag", el);
