@@ -2,7 +2,7 @@
 // @name         AddHashtag
 // @namespace    http://Vfokin.net/
 // @updateURL    https://raw.githubusercontent.com/VF2048/hashtagTemplates/master/AddHashtag.js
-// @version      0.2
+// @version      0.3
 // @description  try to take over the world!
 // @author       Vfokin
 // @match        https://creatio.nornik.ru/0/Nui/ViewModule.aspx*
@@ -18,7 +18,7 @@ const startLevelINC = 1;
 
 //   Required hashtag level depth
 const endLevelRitm = 1;
-const endLevelINC = 3;
+const endLevelINC = 4;
 
 //   The minimum number of hashtags for different tasks
 // to coloring
@@ -45,7 +45,7 @@ const Hashtags = [
         // { name: "#Itproblem", title: "Отмечаются проактивные работы по выгрузкам из SCCM и Zabbix СЛ ППКС, обычно присылается готовый шаблон в письме с списком активностей и хостов." },
     ],
     [
-        { name: "#SDA", title: "Для снятия статистики  установок ПО\ИС скриптами Дмитрия Свиридова" },
+        // { name: "#SDA", title: "Для снятия статистики  установок ПО\ИС скриптами Дмитрия Свиридова" },
     ],
     [
         { name: "#ПО", title: "Ошибки, вылеты, не правильная работа…" },
